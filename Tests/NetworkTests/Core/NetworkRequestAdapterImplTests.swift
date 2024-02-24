@@ -20,7 +20,7 @@ final class NetworkRequestAdapterImplTests: XCTestCase {
 
     func testURLRequest_whenEndpointHasValidURLComponents_shallReturnExpectedInstance() throws {
         // Given
-        let validEndpoint = EndpointMock(scheme: "https", host: "google.com", path: ["hola", "barcelona"])
+        let validEndpoint = EndpointMock(scheme: "http", host: "google.com", path: ["hola", "barcelona"])
         let request = NetworkRequestMock(method: .get, endpoint: validEndpoint, parameters: nil, responseMock: "")
 
         // When
@@ -28,8 +28,12 @@ final class NetworkRequestAdapterImplTests: XCTestCase {
 
         // Then
         XCTAssertEqual(result.httpMethod, "GET")
-        let expectedURL = URL(string: "https://google.com/hola/barcelona")!
-        XCTAssertEqual(result.url, expectedURL)
+        XCTAssertNil(result.httpBody)
+		let resultURLComponents = try XCTUnwrap(result.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) })
+		XCTAssertEqual(resultURLComponents.scheme, "http")
+		XCTAssertEqual(resultURLComponents.host, "google.com")
+		XCTAssertEqual(resultURLComponents.path, "/hola/barcelona")
+		XCTAssertNil(resultURLComponents.query)
     }
 
     func testURLRequest_whenEndpointHasInvalidScheme_shallThrowInvalidSchemeEndpointError() throws {
@@ -58,7 +62,14 @@ final class NetworkRequestAdapterImplTests: XCTestCase {
 
         // Then
         XCTAssertEqual(result.httpMethod, "GET")
-        let expectedURL = URL(string: "https://good-beers.com/api/v2?page=5&type=IPA")!
-        XCTAssertEqual(result.url, expectedURL)
+		XCTAssertNil(result.httpBody)
+		let resultURLComponents = try XCTUnwrap(result.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) })
+		XCTAssertEqual(resultURLComponents.scheme, "https")
+		XCTAssertEqual(resultURLComponents.host, "good-beers.com")
+		XCTAssertEqual(resultURLComponents.path, "/api/v2")
+		let expectedQueryItems = [URLQueryItem(name: "type", value: "IPA"), URLQueryItem(name: "page", value: "5")]
+		let resultQueryItems = try XCTUnwrap(resultURLComponents.queryItems)
+		XCTAssertEqual(resultQueryItems.count, expectedQueryItems.count)
+		XCTAssertTrue(expectedQueryItems.allSatisfy { resultQueryItems.contains($0) })
     }
 }
