@@ -58,6 +58,7 @@ The package has been designed with modularisation in mind. For this reason its c
 Ideally you'd import the `Network` module in your dependency injection layer, extracting a `NetworkClient` instance from exposed factory `NetworkClientFactoryImpl`, like so
 
 ```swift
+
 struct AppDependencies {
 	let networkClient: NetworkClient
 
@@ -75,16 +76,19 @@ After that, let's say you want to hit the PUNK API to retrieve a list of beers.
 You'll want to declare a concrete `Endpoint` 
 
 ```swift
+
 struct PunkBeersEndpoint: Endpoint {
 	var scheme: String { "https" }
 	var host: String { "api.punkapi.com" }
 	var path: PathComponents { ["v2"] }
 }
+
 ```
 
 a concrete `NetworkRequest`
 
 ```swift
+
 struct GetBeersRequest: NetworkRequest {
 	typealias Response = [Beer]
 
@@ -94,6 +98,7 @@ struct GetBeersRequest: NetworkRequest {
 
 	var endpoint: Endpoint { PunkBeersEndpoint() }
 }
+
 ```
 
 and finally you'll be able to hit the network with just 1 line of code
