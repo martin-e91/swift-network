@@ -1,5 +1,5 @@
 # Network
-[![Build & Test](https://github.com/martin-e91/swift-network/actions/workflows/CI.yml/badge.svg)](https://github.com/martin-e91/swift-network/actions/workflows/CI.yml)
+[![Build & Test](https://github.com/martin-e91/swift-network/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/martin-e91/swift-network/actions/workflows/unit_tests.yml)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/martin-e91/swift-network)
 [![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
 [![License](https://img.shields.io/github/license/martin-e91/swift-network)](LICENSE)
