@@ -16,5 +16,6 @@ let package = Package(
         .target(name: "Network", dependencies: ["NetworkAPI"]),
         .target(name: "NetworkMocks", dependencies: ["NetworkAPI"]),
         .testTarget(name: "NetworkTests", dependencies: ["Network", "NetworkMocks"])
-    ]
+    ],
+	swiftLanguageVersions: [.v5]
 )
