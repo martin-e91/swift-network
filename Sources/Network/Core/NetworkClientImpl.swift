@@ -5,7 +5,7 @@ public struct NetworkClientImpl: NetworkClient {
     let session: URLSessionProtocol
     let requestAdapter: NetworkRequestAdapter
 
-    package init(session: URLSessionProtocol, requestAdapter: NetworkRequestAdapter) {
+    init(session: URLSessionProtocol, requestAdapter: NetworkRequestAdapter) {
         self.session = session
         self.requestAdapter = requestAdapter
     }
