@@ -39,16 +39,17 @@ set -o pipefail && env NSUnbufferedIO=YES xcrun xccov view --report --json $RESU
 
 # Check code coverage.
 ./Scripts/check_code_coverage.swift $RESULT_JSON $REQUIRED_CODE_COVERAGE
+CODE_COVERAGE_EXIT_CODE=$?
 
 # Cleanup
 echo "Removing $TMP_FOLDER temporary folder"
 rm -rf $TMP_FOLDER
 
 # Check if pipeline should fail.
-retVal=$?
-if [ $retVal -ne 0 ]; then
+if [ $CODE_COVERAGE_EXIT_CODE -eq 0 ]; then
+    echo "✅ PIPELINE SUCCEEDED."
+    exit 0
+else
     echo "❌ PIPELINE FAILED."
     exit 1
-else
-    echo "✅ PIPELINE SUCCEEDED."
 fi 
