@@ -2,14 +2,21 @@ import Foundation
 import NetworkAPI
 
 struct StandardRequestParametersEncoder: ParametersEncoder {
+	private let jsonEncoder: JSONEncoder
+
+	init() {
+		self.jsonEncoder = JSONEncoder()
+		jsonEncoder.outputFormatting = [.sortedKeys]
+	}
+
 	func encode(parameters: RequestParameter, in request: inout URLRequest) throws {
 		switch parameters {
 		case let .query(dictionary):
 			guard let queryItems = dictionary.asQueryItems else { return }
 			try add(queryItems, to: &request)
 
-		case let .body(encodale):
-			return
+		case let .body(encodable):
+			request.httpBody = try jsonEncoder.encode(encodable)
 		}
 	}
 

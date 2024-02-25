@@ -4,10 +4,13 @@ import XCTest
 @testable import Network
 
 final class StandardRequestParametersEncoderTests: XCTestCase {
+	private var jsonEncoder: JSONEncoder!
 	private var sut: StandardRequestParametersEncoder!
 
 	override func setUp() {
 		super.setUp()
+		jsonEncoder = JSONEncoder()
+		jsonEncoder.outputFormatting = .sortedKeys
 		sut = StandardRequestParametersEncoder()
 	}
 
@@ -29,12 +32,52 @@ final class StandardRequestParametersEncoderTests: XCTestCase {
 		XCTAssertTrue(encodedQueryItems.allSatisfy(expectedQueryParams.contains(_:)))
 	}
 
-	func testEncode_whenCalledWithBodyParameter_shouldEncodeHTTPBodyInURLRequest() {
+	func testEncode_whenCalledWithBodyParameter_shouldEncodeHTTPBodyInURLRequest() throws {
 		// Given
+		var urlRequest = try URLRequest(url: XCTUnwrap(URL(string: "google.com")))
 
 		// When
+		try sut.encode(parameters: .body("hello, world!"), in: &urlRequest)
 
 		// Then
-		XCTFail("Not Implemented")
+		let resultHTTPBody = try XCTUnwrap(urlRequest.httpBody)
+		let expectedBody = try jsonEncoder.encode("hello, world!")
+		XCTAssertEqual(resultHTTPBody, expectedBody)
+	}
+
+	func testEncode_whenCalledWithBodyWithCustomType_shouldEncodeHTTPBodyInURLRequest() throws {
+		// Given
+		struct Beer: Encodable {
+			let name: String
+			let alchool: Int
+		}
+
+		var urlRequest = try URLRequest(url: XCTUnwrap(URL(string: "google.com")))
+
+		// When
+		try sut.encode(parameters: .body(Beer(name: "Leffe", alchool: 7)), in: &urlRequest)
+
+		// Then
+		let resultHTTPBody = try XCTUnwrap(urlRequest.httpBody)
+		let expectedBody = try jsonEncoder.encode(Beer(name: "Leffe", alchool: 7))
+		XCTAssertEqual(resultHTTPBody, expectedBody)
+	}
+
+	func testEncode_whenCalledWithBodyWithArrayType_shouldEncodeHTTPBodyInURLRequest() throws {
+		// Given
+		struct Beer: Encodable {
+			let name: String
+			let alchool: Int
+		}
+
+		var urlRequest = try URLRequest(url: XCTUnwrap(URL(string: "google.com")))
+
+		// When
+		try sut.encode(parameters: .body([Beer(name: "Leffe", alchool: 7), Beer(name: "Estrella Galicia", alchool: 3)]), in: &urlRequest)
+
+		// Then
+		let resultHTTPBody = try XCTUnwrap(urlRequest.httpBody)
+		let expectedBody = try jsonEncoder.encode([Beer(name: "Leffe", alchool: 7), Beer(name: "Estrella Galicia", alchool: 3)])
+		XCTAssertEqual(resultHTTPBody, expectedBody)
 	}
 }
