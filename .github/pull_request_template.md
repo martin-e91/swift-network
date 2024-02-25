@@ -1,13 +1,3 @@
----
-name: Pull request
-about: Create a pull request to contribute to this project
-title: ""
-labels: enhancement
-
----
-
-# Pull Request
-
 ## Description
 <!-- Briefly describe the changes introduced by this pull request. -->
 
