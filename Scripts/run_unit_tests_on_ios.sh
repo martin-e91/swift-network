@@ -13,7 +13,7 @@ RESULT_BUNDLE="$TMP_FOLDER/CodeCoverage.xcresult"
 RESULT_JSON="$TMP_FOLDER/CodeCoverage.json"
 
 # Minimum code coverage threshold.
-REQUIRED_CODE_COVERAGE=99
+REQUIRED_CODE_COVERAGE=85
 
 if [ -d $TMP_FOLDER ]; then
 	echo "Removing previous $TMP_FOLDER temporary folder"

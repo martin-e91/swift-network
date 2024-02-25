@@ -18,8 +18,5 @@ jobs:
     - name: Run unit tests for macOS
       run: swift test -v
 
-    - name: Install xcbeautify 🧼
-      run: brew install xcbeautify
-
     - name: Run iOS tests
       run: ./Scripts/run_unit_tests_on_ios.sh
