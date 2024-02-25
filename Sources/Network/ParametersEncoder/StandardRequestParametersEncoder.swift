@@ -27,7 +27,7 @@ struct StandardRequestParametersEncoder: ParametersEncoder {
 
 // MARK: - Helpers
 
-private extension Dictionary<String, Any> {
+private extension Dictionary where Key == String {
 	var asQueryItems: [URLQueryItem]? {
 		map { (key, value) in
 			URLQueryItem(name: key, value: "\(value)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed))

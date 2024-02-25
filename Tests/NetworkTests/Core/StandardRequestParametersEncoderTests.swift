@@ -21,7 +21,7 @@ final class StandardRequestParametersEncoderTests: XCTestCase {
 		var urlRequest = try URLRequest(url: XCTUnwrap(URL(string: "google.com")))
 
 		// When
-		try sut.encode(parameters: .query(["size": 90, "color": "red"]), in: &urlRequest)
+		try sut.encode(parameters: .query(["size": "90", "color": "red"]), in: &urlRequest)
 
 		// Then
 		let encodedQueryItems = try XCTUnwrap(urlRequest.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false)?.queryItems })
