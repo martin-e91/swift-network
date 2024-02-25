@@ -45,11 +45,5 @@ CODE_COVERAGE_EXIT_CODE=$?
 echo "Removing $TMP_FOLDER temporary folder"
 rm -rf $TMP_FOLDER
 
-# Check if pipeline should fail.
-if [ $CODE_COVERAGE_EXIT_CODE -eq 0 ]; then
-    echo "✅ PIPELINE SUCCEEDED."
-    exit 0
-else
-    echo "❌ PIPELINE FAILED."
-    exit 1
-fi 
+# Pipeline's success is tied to the code coverage checks.
+exit $CODE_COVERAGE_EXIT_CODE
