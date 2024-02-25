@@ -14,18 +14,18 @@ struct CodeCoverage: Decodable {
 
 let coverageFileName = CommandLine.arguments[1]
 guard let minimumCoverageValue = Double(CommandLine.arguments[2]) else {
-	print("Invalid argument. Minimum coverage value needs to be a number.")
+	printError("Invalid argument. Minimum coverage value needs to be a number.")
 	exit(-1)
 }
 let fileManager = FileManager.default
 
 if !fileManager.fileExists(atPath: coverageFileName) {
-	print("File `\(coverageFileName)` does not exist.")
+	printError("File `\(coverageFileName)` does not exist.")
 	exit(-1)
 }
 
 guard let codeCoverageData = fileManager.contents(atPath: coverageFileName) else {
-	print("Couldn't read content of file `\(coverageFileName)`")
+	printError("Couldn't read content of file `\(coverageFileName)`")
 	exit(-1)
 }
 
@@ -43,17 +43,21 @@ do {
 		print(String(format: "Code coverage is %.2f", lineCoveragePercentage).inGreen)
 		exit(0)
 	} else {
-		print(String(format: "Code coverage is %.2f is less than required %.2f", lineCoveragePercentage, minimumCoverageValue).inRed)
+		printError(String(format: "Code coverage is %.2f is less than required %.2f", lineCoveragePercentage, minimumCoverageValue).inRed)
 		exit(-1)
 	}
 } catch {
-	print("Error opening file at `\(coverageFileName)`")
-	print(error)
+	printError("Error opening file at `\(coverageFileName)\n \(error)`")
 	exit(-1)
 }
 
+// MARK: - Utils
 
-extension String {
+private func printError(_ message: String) {
+	print(message.inRed)
+}
+
+private extension String {
 	var inGreen: String {
 		"\u{001B}[0;32m\(self)"
 	}
