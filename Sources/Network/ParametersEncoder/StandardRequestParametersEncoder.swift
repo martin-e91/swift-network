@@ -2,11 +2,10 @@ import Foundation
 import NetworkAPI
 
 struct StandardRequestParametersEncoder: ParametersEncoder {
-	private let jsonEncoder: JSONEncoder
+	private let bodyEncoder: JSONEncoder
 
-	init() {
-		self.jsonEncoder = JSONEncoder()
-		jsonEncoder.outputFormatting = [.sortedKeys]
+	init(bodyEncoder: JSONEncoder) {
+		self.bodyEncoder = bodyEncoder
 	}
 
 	func encode(parameters: RequestParameter, in request: inout URLRequest) throws {
@@ -16,7 +15,7 @@ struct StandardRequestParametersEncoder: ParametersEncoder {
 			try add(queryItems, to: &request)
 
 		case let .body(encodable):
-			request.httpBody = try jsonEncoder.encode(encodable)
+			request.httpBody = try bodyEncoder.encode(encodable)
 		}
 	}
 

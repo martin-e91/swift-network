@@ -4,14 +4,14 @@ import XCTest
 @testable import Network
 
 final class StandardRequestParametersEncoderTests: XCTestCase {
-	private var jsonEncoder: JSONEncoder!
+	private var bodyEncoder: JSONEncoder!
 	private var sut: StandardRequestParametersEncoder!
 
 	override func setUp() {
 		super.setUp()
-		jsonEncoder = JSONEncoder()
-		jsonEncoder.outputFormatting = .sortedKeys
-		sut = StandardRequestParametersEncoder()
+		bodyEncoder = JSONEncoder()
+		bodyEncoder.outputFormatting = .sortedKeys // formatting the output will allow us to avoid boilerplate while asserting on expected body.
+		sut = StandardRequestParametersEncoder(bodyEncoder: bodyEncoder)
 	}
 
 	override func tearDown() {
@@ -41,7 +41,7 @@ final class StandardRequestParametersEncoderTests: XCTestCase {
 
 		// Then
 		let resultHTTPBody = try XCTUnwrap(urlRequest.httpBody)
-		let expectedBody = try jsonEncoder.encode("hello, world!")
+		let expectedBody = try bodyEncoder.encode("hello, world!")
 		XCTAssertEqual(resultHTTPBody, expectedBody)
 	}
 
@@ -59,7 +59,7 @@ final class StandardRequestParametersEncoderTests: XCTestCase {
 
 		// Then
 		let resultHTTPBody = try XCTUnwrap(urlRequest.httpBody)
-		let expectedBody = try jsonEncoder.encode(Beer(name: "Leffe", alchool: 7))
+		let expectedBody = try bodyEncoder.encode(Beer(name: "Leffe", alchool: 7))
 		XCTAssertEqual(resultHTTPBody, expectedBody)
 	}
 
@@ -77,7 +77,7 @@ final class StandardRequestParametersEncoderTests: XCTestCase {
 
 		// Then
 		let resultHTTPBody = try XCTUnwrap(urlRequest.httpBody)
-		let expectedBody = try jsonEncoder.encode([Beer(name: "Leffe", alchool: 7), Beer(name: "Estrella Galicia", alchool: 3)])
+		let expectedBody = try bodyEncoder.encode([Beer(name: "Leffe", alchool: 7), Beer(name: "Estrella Galicia", alchool: 3)])
 		XCTAssertEqual(resultHTTPBody, expectedBody)
 	}
 }
