@@ -7,8 +7,13 @@ checkCodeCoverage()
 
 // MARK: - Types
 
-struct Target: Decodable {
+struct Target: Decodable, CustomStringConvertible {
     let name: String
+    let lineCoverage: Double
+
+    var description: String {
+        "\(name)        |       \(String(format: "%.2f%%", lineCoverage * 100))"
+    }
 }
 
 /// Code coverage information gathered by Xcode.
@@ -29,6 +34,16 @@ struct CodeCoverage: Decodable, CustomStringConvertible {
     var description: String {
         String(format: "Code coverage is %.2f%%", coveragePercentage) + " (targets: \(targets.map(\.name).joined(separator: " ,")))"
     }
+
+    var targetsDescription: String {
+        """
+        ------------------------------
+        | COVERAGE BY TARGET         |
+        ------------------------------
+        \(targets.map(\.description).joined(separator: "\n"))
+        ------------------------------
+        """
+    }
 }
 
 struct Arguments {
@@ -40,8 +55,7 @@ struct Arguments {
     init(fromCommandLineArgs args: [String]) {
         self.pathToCoverageFile = CommandLine.arguments[1]
         guard let minimumCoverageValue = Double(CommandLine.arguments[2]) else {
-            printError("Invalid argument. Minimum coverage value needs to be a number.")
-            exit(-1)
+            fatalError("Invalid argument. Minimum coverage value needs to be a number.".inRed)
         }
         self.requiredCoverage = minimumCoverageValue
     }
@@ -66,15 +80,16 @@ func checkCodeCoverage() {
         }
 
         if information.coveragePercentage >= arguments.requiredCoverage {
+            print(information.targetsDescription)
             print(information.description.inGreen)
             exit(0)
         } else {
-            printError(String(format: "\(information.description) is less than required %.2f%%", arguments.requiredCoverage).inRed)
-            exit(-1)
+            print(String(format: "\(information.description) is less than required %.2f%%", arguments.requiredCoverage).inRed)
+            exit(1)
         }
     } catch {
-        printError("Error while parsing report: \n\(error)`")
-        exit(-1)
+        print("Error while parsing report: \n\(error)`".inRed)
+        exit(1)
     }
 }
 
@@ -82,13 +97,11 @@ private func coverageData(for arguments: Arguments) -> Data? {
     let fileManager = FileManager.default
     let coverageFileName = arguments.pathToCoverageFile
     if !fileManager.fileExists(atPath: coverageFileName) {
-        printError("File `\(coverageFileName)` does not exist.")
-        exit(-1)
+        fatalError("File `\(coverageFileName)` does not exist.".inRed)
     }
 
     guard let codeCoverageData = fileManager.contents(atPath: coverageFileName) else {
-        printError("Couldn't read content of file `\(coverageFileName)`")
-        exit(-1)
+        fatalError("Couldn't read content of file `\(coverageFileName)`".inRed)
     }
     return codeCoverageData
 }
