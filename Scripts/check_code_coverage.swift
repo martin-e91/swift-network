@@ -40,10 +40,10 @@ do {
 	let lineCoveragePercentage = information.lineCoverage * 100
 
 	if lineCoveragePercentage >= minimumCoverageValue {
-		print(String(format: "Code coverage is %.2f", lineCoveragePercentage).inGreen)
+		print(String(format: "Code coverage is %.2f%", lineCoveragePercentage).inGreen)
 		exit(0)
 	} else {
-		printError(String(format: "Code coverage is %.2f is less than required %.2f", lineCoveragePercentage, minimumCoverageValue).inRed)
+		printError(String(format: "Code coverage is %.2f% is less than required %.2f%", lineCoveragePercentage, minimumCoverageValue).inRed)
 		exit(-1)
 	}
 } catch {

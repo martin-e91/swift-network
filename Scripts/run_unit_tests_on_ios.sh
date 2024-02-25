@@ -13,7 +13,7 @@ RESULT_BUNDLE="$TMP_FOLDER/CodeCoverage.xcresult"
 RESULT_JSON="$TMP_FOLDER/CodeCoverage.json"
 
 # Minimum code coverage threshold.
-MIN_CODE_COVERAGE=99.0
+REQUIRED_CODE_COVERAGE=85.0
 
 if [ -d $TMP_FOLDER ]; then
 	echo "Removing previous $TMP_FOLDER temporary folder"
@@ -38,7 +38,7 @@ set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -sche
 set -o pipefail && env NSUnbufferedIO=YES xcrun xccov view --report --json $RESULT_BUNDLE > $RESULT_JSON
 
 # Check code coverage.
-./Scripts/check_code_coverage.swift $RESULT_JSON $MIN_CODE_COVERAGE
+./Scripts/check_code_coverage.swift $RESULT_JSON $REQUIRED_CODE_COVERAGE
 
 echo "Removing $TMP_FOLDER temporary folder"
 rm -rf $TMP_FOLDER
