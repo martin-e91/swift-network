@@ -20,7 +20,7 @@ This library can be added as dependency in your project by using [Swift Package 
 
 You'll need to add the following in your `Package.swift` file:
 
-Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift` or the Package list in Xcode.
+Once you have your Swift package set up, adding Network as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift` or the Package list in Xcode.
 
 ```swift
 dependencies: [
