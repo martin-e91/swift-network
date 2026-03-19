@@ -11,5 +11,5 @@ public protocol NetworkRequest {
 // MARK: - Default Implementation
 
 public extension NetworkRequest {
-	var parameters: RequestParameter? { nil }
+    var parameters: RequestParameter? { nil }
 }

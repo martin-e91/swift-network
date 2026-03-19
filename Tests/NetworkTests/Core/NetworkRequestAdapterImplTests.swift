@@ -4,12 +4,12 @@ import XCTest
 @testable import Network
 
 final class NetworkRequestAdapterImplTests: XCTestCase {
-	private var parametersEncoderMock: ParametersEncoderMock!
+    private var parametersEncoderMock: ParametersEncoderMock!
     private var sut: StandardNetworkRequestAdapter!
 
     override func setUp() {
         super.setUp()
-		parametersEncoderMock = ParametersEncoderMock()
+        parametersEncoderMock = ParametersEncoderMock()
         sut = StandardNetworkRequestAdapter(parametersEncoder: parametersEncoderMock)
     }
 
@@ -31,11 +31,11 @@ final class NetworkRequestAdapterImplTests: XCTestCase {
         // Then
         XCTAssertEqual(result.httpMethod, "GET")
         XCTAssertNil(result.httpBody)
-		let resultURLComponents = try XCTUnwrap(result.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) })
-		XCTAssertEqual(resultURLComponents.scheme, "http")
-		XCTAssertEqual(resultURLComponents.host, "google.com")
-		XCTAssertEqual(resultURLComponents.path, "/hola/barcelona")
-		XCTAssertNil(resultURLComponents.query)
+        let resultURLComponents = try XCTUnwrap(result.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) })
+        XCTAssertEqual(resultURLComponents.scheme, "http")
+        XCTAssertEqual(resultURLComponents.host, "google.com")
+        XCTAssertEqual(resultURLComponents.path, "/hola/barcelona")
+        XCTAssertNil(resultURLComponents.query)
     }
 
     func testURLRequest_whenEndpointHasInvalidScheme_shallThrowInvalidSchemeEndpointError() throws {
@@ -54,70 +54,70 @@ final class NetworkRequestAdapterImplTests: XCTestCase {
         }
     }
 
-	func testURLRequest_whenRequestHasNilParameters_shouldReturnURLRequestWithoutCallingParameterEncoder() throws {
-		// Given
-		let validEndpoint = EndpointMock(scheme: "https", host: "good-beers.com", path: ["api", "v2"])
-		let request = NetworkRequestMock(method: .post, endpoint: validEndpoint, parameters: nil, responseMock: 9)
+    func testURLRequest_whenRequestHasNilParameters_shouldReturnURLRequestWithoutCallingParameterEncoder() throws {
+        // Given
+        let validEndpoint = EndpointMock(scheme: "https", host: "good-beers.com", path: ["api", "v2"])
+        let request = NetworkRequestMock(method: .post, endpoint: validEndpoint, parameters: nil, responseMock: 9)
 
-		// When
-		let result = try sut.urlRequest(for: request)
+        // When
+        let result = try sut.urlRequest(for: request)
 
-		// Then
-		XCTAssertEqual(result.httpMethod, "POST")
-		XCTAssertEqual(parametersEncoderMock.encodeCallCount, .zero)
-		XCTAssertNil(parametersEncoderMock.encodeError)
-		XCTAssertNil(parametersEncoderMock.encodeParametersParameter)
-	}
+        // Then
+        XCTAssertEqual(result.httpMethod, "POST")
+        XCTAssertEqual(parametersEncoderMock.encodeCallCount, .zero)
+        XCTAssertNil(parametersEncoderMock.encodeError)
+        XCTAssertNil(parametersEncoderMock.encodeParametersParameter)
+    }
 
-	func testURLRequest_whenCalledWithSomeParameters_shouldReturnUpdatedURLRequest() throws {
-		// Given
-		parametersEncoderMock.encodeRequestParameterUpdater = { urlRequest in
-			urlRequest.httpMethod = "updated_method"
-			urlRequest.timeoutInterval = 2
-			urlRequest.httpBody = "updated_body".data(using: .utf8)
-		}
-		let validEndpoint = EndpointMock(scheme: "https", host: "good-beers.com", path: ["api", "v2"])
-		let request = NetworkRequestMock(method: .put, endpoint: validEndpoint, parameters: .body("non_nil_parameter"), responseMock: 1)
+    func testURLRequest_whenCalledWithSomeParameters_shouldReturnUpdatedURLRequest() throws {
+        // Given
+        parametersEncoderMock.encodeRequestParameterUpdater = { urlRequest in
+            urlRequest.httpMethod = "updated_method"
+            urlRequest.timeoutInterval = 2
+            urlRequest.httpBody = "updated_body".data(using: .utf8)
+        }
+        let validEndpoint = EndpointMock(scheme: "https", host: "good-beers.com", path: ["api", "v2"])
+        let request = NetworkRequestMock(method: .put, endpoint: validEndpoint, parameters: .body("non_nil_parameter"), responseMock: 1)
 
-		// When
-		let result = try sut.urlRequest(for: request)
+        // When
+        let result = try sut.urlRequest(for: request)
 
-		// Then
-		XCTAssertEqual(result.httpMethod, "updated_method")
-		XCTAssertEqual(result.timeoutInterval, 2)
-		let resultBody = try XCTUnwrap(result.httpBody)
-		let expectedBody = try XCTUnwrap("updated_body".data(using: .utf8))
-		XCTAssertEqual(resultBody, expectedBody)
-		XCTAssertEqual(parametersEncoderMock.encodeCallCount, 1)
-		guard case let .body(inputBody as String) = parametersEncoderMock.encodeParametersParameter else {
-			XCTFail("`encode(parameters:request:)` was called with unexpected input.")
-			return
-		}
-		XCTAssertEqual(inputBody, "non_nil_parameter")
-		XCTAssertNil(parametersEncoderMock.encodeError)
-	}
+        // Then
+        XCTAssertEqual(result.httpMethod, "updated_method")
+        XCTAssertEqual(result.timeoutInterval, 2)
+        let resultBody = try XCTUnwrap(result.httpBody)
+        let expectedBody = try XCTUnwrap("updated_body".data(using: .utf8))
+        XCTAssertEqual(resultBody, expectedBody)
+        XCTAssertEqual(parametersEncoderMock.encodeCallCount, 1)
+        guard case let .body(inputBody as String) = parametersEncoderMock.encodeParametersParameter else {
+            XCTFail("`encode(parameters:request:)` was called with unexpected input.")
+            return
+        }
+        XCTAssertEqual(inputBody, "non_nil_parameter")
+        XCTAssertNil(parametersEncoderMock.encodeError)
+    }
 
-	func testURLRequest_whenParameterEncoderThrowsError_shouldThrowError() throws {
-		// Given
-		let expectedError = NSError(domain: #function, code: -1)
-		parametersEncoderMock.encodeError = expectedError
-		let validEndpoint = EndpointMock(scheme: "https", host: "good-beers.com", path: ["api", "v2"])
-		let request = NetworkRequestMock(method: .post, endpoint: validEndpoint, parameters: .query(["par1": "hola"]), responseMock: 9)
+    func testURLRequest_whenParameterEncoderThrowsError_shouldThrowError() throws {
+        // Given
+        let expectedError = NSError(domain: #function, code: -1)
+        parametersEncoderMock.encodeError = expectedError
+        let validEndpoint = EndpointMock(scheme: "https", host: "good-beers.com", path: ["api", "v2"])
+        let request = NetworkRequestMock(method: .post, endpoint: validEndpoint, parameters: .query(["par1": "hola"]), responseMock: 9)
 
-		// When
-		do {
-			_ = try sut.urlRequest(for: request)
-			XCTFail("Previous call should throw error instead.")
-		} catch {
-			// Then
-			let error = error as NSError
-			XCTAssertEqual(error, expectedError)
-			XCTAssertEqual(parametersEncoderMock.encodeCallCount, 1)
-			guard case let .query(inputParameter) = parametersEncoderMock.encodeParametersParameter else {
-				XCTFail("`encode(parameters:request:)` was called with unexpected input.")
-				return
-			}
-			XCTAssertEqual(inputParameter, ["par1": "hola"])
-		}
-	}
+        // When
+        do {
+            _ = try sut.urlRequest(for: request)
+            XCTFail("Previous call should throw error instead.")
+        } catch {
+            // Then
+            let error = error as NSError
+            XCTAssertEqual(error, expectedError)
+            XCTAssertEqual(parametersEncoderMock.encodeCallCount, 1)
+            guard case let .query(inputParameter) = parametersEncoderMock.encodeParametersParameter else {
+                XCTFail("`encode(parameters:request:)` was called with unexpected input.")
+                return
+            }
+            XCTAssertEqual(inputParameter, ["par1": "hola"])
+        }
+    }
 }
